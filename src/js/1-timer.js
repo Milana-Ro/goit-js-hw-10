@@ -67,7 +67,9 @@ function addLeadingZero(value) {
 function showAlert() {
   iziToast.show({
     message: 'Please choose a date in the future',
-    color: 'red',
+    messageColor: '#fff',
+    messageLineHeight: '150%',
+    backgroundColor: '#ef4040',
     position: 'topRight',
   });
 }
