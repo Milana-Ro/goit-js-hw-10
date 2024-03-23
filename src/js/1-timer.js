@@ -6,7 +6,7 @@ import 'izitoast/dist/css/iziToast.min.css';
 
 const dateInput = document.querySelector('#datetime-picker');
 const startButton = document.querySelector('button');
-const values = [...document.querySelectorAll('.value')];
+const timerNodes = [...document.querySelectorAll('.value')];
 
 const options = {
   enableTime: true,
@@ -47,16 +47,18 @@ function onStartTimerClick() {
     dateInput.disabled = true;
 
     const convertedDate = convertMs(timeDifference);
-    const { days, hours, minutes, seconds } = convertedDate;
-    const [daysValue, hoursValue, minutesValue, secondsValue] = values;
-
-    daysValue.textContent = addLeadingZero(days);
-    hoursValue.textContent = addLeadingZero(hours);
-    minutesValue.textContent = addLeadingZero(minutes);
-    secondsValue.textContent = addLeadingZero(seconds);
+    renderTime(convertedDate);
   }, 1000);
 }
+function renderTime(dateObject) {
+  const { days, hours, minutes, seconds } = dateObject;
+  const [daysNode, hoursNode, minutesNode, secondsNode] = timerNodes;
 
+  daysNode.textContent = addLeadingZero(days);
+  hoursNode.textContent = addLeadingZero(hours);
+  minutesNode.textContent = addLeadingZero(minutes);
+  secondsNode.textContent = addLeadingZero(seconds);
+}
 // HELPERS //
 
 function addLeadingZero(value) {
