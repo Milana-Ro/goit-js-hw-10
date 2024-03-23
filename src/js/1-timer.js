@@ -4,6 +4,76 @@ import 'flatpickr/dist/flatpickr.min.css';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
+const dateInput = document.querySelector('#datetime-picker');
+const startButton = document.querySelector('button');
+const values = [...document.querySelectorAll('.value')];
+
+const options = {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose: onCloseDatePicker,
+};
+
+const datePicker = flatpickr(dateInput, options);
+let userSelectedDate;
+setDisabledStartButton();
+
+function onCloseDatePicker(selectedDates) {
+  userSelectedDate = Date.parse(selectedDates[0]);
+
+  if (userSelectedDate <= Date.now()) {
+    showAlert();
+    setDisabledStartButton();
+  } else {
+    setDisabledStartButton(false);
+  }
+}
+
+startButton.addEventListener('click', onStartTimerClick);
+
+function onStartTimerClick() {
+  const timer = setInterval(() => {
+    const timeDifference = userSelectedDate - Date.now();
+
+    if (timeDifference <= 0) {
+      clearInterval(timer);
+      setDisabledStartButton(false);
+      dateInput.disabled = false;
+      return;
+    }
+    setDisabledStartButton();
+    dateInput.disabled = true;
+
+    const convertedDate = convertMs(timeDifference);
+    const { days, hours, minutes, seconds } = convertedDate;
+    const [daysValue, hoursValue, minutesValue, secondsValue] = values;
+
+    daysValue.textContent = addLeadingZero(days);
+    hoursValue.textContent = addLeadingZero(hours);
+    minutesValue.textContent = addLeadingZero(minutes);
+    secondsValue.textContent = addLeadingZero(seconds);
+  }, 1000);
+}
+
+// HELPERS //
+
+function addLeadingZero(value) {
+  return value.toString().padStart(2, '0');
+}
+function showAlert() {
+  iziToast.show({
+    message: 'Please choose a date in the future',
+    color: 'red',
+    position: 'topRight',
+  });
+}
+
+function setDisabledStartButton(flag = true) {
+  startButton.disabled = flag;
+}
+
 function convertMs(ms) {
   // Number of milliseconds per unit of time
   const second = 1000;
@@ -22,78 +92,3 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-
-// console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-// console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-// console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
-
-const dateInput = document.querySelector('#datetime-picker');
-const startButton = document.querySelector('button');
-const values = [...document.querySelectorAll('.value')];
-
-const options = {
-  enableTime: true,
-  time_24hr: true,
-  defaultDate: new Date(),
-  minuteIncrement: 1,
-  onClose: onCloseFoo,
-};
-const datePicker = flatpickr(dateInput, options);
-let userSelectedDate;
-// console.log(userSelectedDate);
-
-function onCloseFoo(selectedDates) {
-  userSelectedDate = selectedDates[0];
-  //   console.log(selectedDates[0]);
-
-  if (Date.parse(userSelectedDate) < Date.now()) {
-    // console.log(' no no no');
-    showAlert();
-    startButton.disabled = true;
-  } else {
-    // console.log('yes yes');
-    startButton.disabled = false;
-  }
-}
-
-startButton.addEventListener('click', onStartTimerClick);
-
-function onStartTimerClick() {
-  const timerID = setInterval(() => {
-    const diffTime = userSelectedDate - Date.now();
-    console.log(diffTime);
-    if (diffTime <= 0) {
-      //   console.log('off time');
-      clearInterval(timerID);
-      startButton.disabled = false;
-      dateInput.disabled = false;
-      return;
-    }
-    startButton.disabled = true;
-    dateInput.disabled = true;
-    convertMs(diffTime);
-    // console.log(convertMs(diffTime));
-    const [daysValue, hoursValue, minutesValue, secondsValue] = values;
-    console.log((secondsValue.textContent = '?????? хз що тут підставляти'));
-  }, 1000);
-}
-
-function addLeadingZero(value) {
-  value.padStart(2, '0');
-}
-function showAlert() {
-  iziToast.show({
-    message: 'Please choose a date in the future',
-    color: 'red',
-    position: 'topRight',
-  });
-}
-
-// task 1
-// виводити час в спани
-
-// task 2
-// зробити кнопку неактивною при першому завантаженні
-
-//task 3
-// refactoring
