@@ -16,7 +16,7 @@ const options = {
   onClose: onCloseDatePicker,
 };
 
-const datePicker = flatpickr(dateInput, options);
+flatpickr(dateInput, options);
 let userSelectedDate;
 setDisabledStartButton();
 
