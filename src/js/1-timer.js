@@ -59,6 +59,7 @@ function renderTime(dateObject) {
   minutesNode.textContent = addLeadingZero(minutes);
   secondsNode.textContent = addLeadingZero(seconds);
 }
+
 // HELPERS //
 
 function addLeadingZero(value) {
